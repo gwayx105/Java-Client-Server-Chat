@@ -3,7 +3,7 @@ import java.net.*;
 import java.io.*;
 import java.util.Scanner;
 //Authors    : Sylvester Zowonu   			 
-//			 : 
+//			 :   
 //School    : California State University Los Angeles
 //Course    : Networking 
 //Reference : http://www.tutorialspoint.com/java/java_networking.htm
@@ -28,6 +28,7 @@ public class Start {
 		System.out.println("send   	   -> Sends message <connection id> <message>");
 		System.out.println("....................................................");
 	}
+	
 	
 	public static void main(String args[]) throws UnknownHostException, IOException {
 		try {
