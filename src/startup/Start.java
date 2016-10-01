@@ -1,6 +1,7 @@
 package startup;
 import java.net.*;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 //Authors    : Sylvester Zowonu   			 
 //			 :   
@@ -9,6 +10,7 @@ import java.util.Scanner;
 //Reference : http://www.tutorialspoint.com/java/java_networking.htm
 public class Start {
 	// Server Port Number
+	
 	public static int ServerPort = 55056;
 	//Server IP address
 	public static String ServerName = "192.168.1.112";
@@ -39,16 +41,19 @@ public class Start {
 		}
 		String cmd="";
 		String[] commands;
-		Socket client = new Socket(ServerName, ServerPort);
+		
+		Socket client = null;
 		@SuppressWarnings("resource")
 		Scanner scanInput = new Scanner(System.in);
+		int id=1;
 		do {
 			System.out.print("Enter Command:");
+			//Read user input from console
 			cmd= scanInput.nextLine();
 			//splits user response into an array 
 			commands=cmd.split(" ");
-			MenuOptions currentDay = MenuOptions.valueOf(commands[0].toUpperCase());			
-			switch(currentDay){
+			MenuOptions firstCmd = MenuOptions.valueOf(commands[0].toUpperCase());			
+			switch(firstCmd){
 			case HELP:
 				//displays program menu options to the user
 				displayHelp();
@@ -61,9 +66,35 @@ public class Start {
 				break;
 			case CONNECT:
 				System.out.println("Connecting...");
-				System.out.println("Connecting to " + ServerName + " on port " + ServerPort);
+				System.out.println("Connecting to " + commands[1] + " on port " + commands[2]);
+				
+				try {
+					//Connecting to Specificied IP address and port number
+					client = new Socket(commands[1], Integer.parseInt(commands[2]));
+					
+					if(client.isConnected()){
+						System.out.println("Connected to : " + client.getInetAddress());
+						System.out.println("Port No : " + client.getPort());
+						//create list of IP address and port numbers
+						String conn="Connect "+client.getInetAddress()+" "+client.getPort();
+						//sending connection info to server
+						OutputStream outToServer = client.getOutputStream();
+				        DataOutputStream out = new DataOutputStream(outToServer);
+				        //Sending to client
+				        out.writeUTF(conn);
+						id++;
+					}else{
+						//Error message to for failed socket creation
+						System.out.println("Connection failed!");
+					}
+					
+				}catch(IOException e) {
+				      e.printStackTrace();
+				}
 		        
-		        System.out.println("Just connected to " + client.getRemoteSocketAddress());
+				break;
+			case SEND:
+				//System.out.println("Just connected to " + myConnect.getRemoteSocketAddress());
 		        OutputStream outToServer = client.getOutputStream();
 		        DataOutputStream out = new DataOutputStream(outToServer);
 		        //Sending to client
@@ -73,8 +104,6 @@ public class Start {
 		         
 		        System.out.println("Server says " + in.readUTF());
 		         client.close();
-				break;
-			case SEND:
 				break;
 			case LIST:
 				System.out.println("List...");
