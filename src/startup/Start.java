@@ -70,7 +70,7 @@ public class Start {
 				break;
 			case CONNECT:
 				//System.out.println("Connecting...");
-				System.out.println("Connecting to " + commands[1] + " on port " + commands[2]);
+				//System.out.println("Connecting to " + commands[1] + " on port " + commands[2]);
 				
 				try {
 					//Connecting to Specificied IP address and port number
@@ -79,9 +79,6 @@ public class Start {
 					if(client.isConnected()){
 						System.out.println("Connected to : " + client.getInetAddress().toString().replace("/",""));
 						System.out.println("Port No : " + client.getLocalPort());
-						//create list of IP address and port numbers
-						//String conn="Connect "+client.getInetAddress()+" "+client.getPort();
-						//sending connection info to server
 						OutputStream outToServer = client.getOutputStream();
 				        DataOutputStream out = new DataOutputStream(outToServer);
 				        //Sending to client
@@ -102,24 +99,28 @@ public class Start {
 			case SEND:				
 		        DataOutputStream outSend = new DataOutputStream(client.getOutputStream());		        
 		        outSend.writeUTF("Send " + commands[1]+" "+commands[2]);		        
-		        
+		        DataInputStream inSend = new DataInputStream(client.getInputStream());
+		        System.out.println(inSend.readUTF());
 				break;
-			case LIST:			
-				OutputStream outCL = client.getOutputStream();
-				DataOutputStream outList = new DataOutputStream(outCL);
-		        //Sending to server
-				outList.writeUTF("LIST");	
-		        //System.out.println("TO SERVER ;;");
-		        DataInputStream inList = new DataInputStream(client.getInputStream());		
-		        //reading from server
-		        System.out.println("TO SERVER ;;");
-		        System.out.println(inList.readUTF());
-		        System.out.println("FROM SERVER ;;");
+			case LIST:	
+				if(client.isConnected()){
+					OutputStream outToServer = client.getOutputStream();
+			        DataOutputStream out = new DataOutputStream(outToServer);
+			        out.writeUTF("LIST");
+			        System.out.println("Command to Server :");
+			        DataInputStream in = new DataInputStream(client.getInputStream());
+			        System.out.println("from Server :");
+			        System.out.println(in.readUTF());
+			        System.out.println("outfrom Server :");
+				}else{
+					System.out.println("Client is down");
+				}				
 				break;
 			case TERMINATE:
 		        DataOutputStream outSe = new DataOutputStream(client.getOutputStream());
 		        outSe.writeUTF("TERMINATE "+commands[1]);
-				System.out.println("Terminated");
+		        DataInputStream inTerm = new DataInputStream(client.getInputStream());
+		        System.out.println(inTerm.readUTF());
 				break;
 			case EXIT:
 				//client.close();
